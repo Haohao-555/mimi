@@ -50,7 +50,7 @@
           </div>
           <!-- 分页器 -->
           <el-pagination
-            v-if="false"
+            v-if="true"
             class="pagination"
             background
             layout="prev, pager, next"
@@ -60,8 +60,17 @@
           > 
           </el-pagination> 
           <!-- 加载更多 -->
-           <div class="load-more" v-if="true">
+           <div class="load-more" v-if="false">
               <el-button type="primary" :loading="loading" @click="loadMore">加载更多</el-button>
+          </div>
+          <!-- 触底触发 -->
+          <div class="scroll-more"
+            v-infinite-scroll="scrollMore"
+            infinite-scroll-disabled="true"
+            infinite-scroll-distance="410"
+            v-if="false"
+          >
+            <img src="/imgs/loading-svg/loading-spinning-bubbles.svg" alt="" v-show="loading">
           </div>
           <!-- 无数据 -->
           <no-data v-if="!loading && list.length ==0"></no-data>
@@ -75,6 +84,7 @@ import orderHeader from "./../components/OrderHeader";
 import Loading from './../components/Loading'
 import NoData from './../components/NoData'
 import { Pagination,Button} from 'element-ui'
+import infiniteScroll from 'vue-infinite-scroll'
 export default {
     name:'order-list',
     components: {
@@ -83,6 +93,9 @@ export default {
       NoData,
       [Pagination.name]:Pagination,
       [Button.name]:Button,
+    },
+     directives: {
+      infiniteScroll
     },
     data() {
         return {
@@ -100,7 +113,8 @@ export default {
     },
     methods: {
         getOrderList() {
-            this.loading = true
+            this.loading = true;
+            this.busy = true;
             this.axios.get("/orders",{
                 params: {
                     pageSize: this.pageSize,
@@ -110,6 +124,7 @@ export default {
                 this.loading = false;
                 this.list = this.list.concat(res.list);
                 this.total = res.total;
+                this.busy = false;
             }).catch(() => {
                 this.loading = false;
             })
@@ -128,15 +143,40 @@ export default {
                 }
             })
         },
-        // 处理分页
+        // 方法一：处理分页
         handleChange(pageNum) {
            this.pageNum = pageNum;
            this.getOrderList();
         },
-        // 加载更多
+        // 方法二：加载更多
         loadMore() {
           this.pageNum++;
           this.getOrderList(); 
+        },
+        // 方法三：滚动加载
+        scrollMore() {
+            this.busy = true;
+            setTimeout(() => {
+                this.pageNum++;
+                this.getList();
+            }, 500);
+        },
+        getList() {
+            this.busy = true;
+            this.axios.get("/orders",{
+                params: {
+                    pageSize: 10,
+                    pageNum: this.pageNum
+                }
+            }).then(res => {
+                this.busy = false;
+                this.list = this.list.concat(res.list);
+                if (res.hasNextPage) {
+                    this.busy = false;
+                }else {
+                    this.busy = true;
+                }
+            })
         }
     },
 }
