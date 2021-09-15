@@ -8,7 +8,9 @@
     <div class="wrapper">
       <div class="container">
         <div class="order-box">
+          <!-- 加载动画 -->
           <loading v-if="loading"></loading>
+          <!-- 订单列表 -->
           <div class="order" v-for="(order,index) in list" :key="index">
             <div class="order-title">
               <div class="item-info fl">
@@ -46,8 +48,9 @@
               </div>
             </div>
           </div>
+          <!-- 分页器 -->
           <el-pagination
-            v-if="true"
+            v-if="false"
             class="pagination"
             background
             layout="prev, pager, next"
@@ -56,6 +59,11 @@
             @current-change="handleChange"
           > 
           </el-pagination> 
+          <!-- 加载更多 -->
+           <div class="load-more" v-if="true">
+              <el-button type="primary" :loading="loading" @click="loadMore">加载更多</el-button>
+          </div>
+          <!-- 无数据 -->
           <no-data v-if="!loading && list.length ==0"></no-data>
         </div>
       </div>
@@ -79,8 +87,8 @@ export default {
     data() {
         return {
             list: [],
-            loading:true,
-            pageSize:10,
+            loading:false,
+            pageSize:4,
             pageNum:1,
             total:0,
             showNextPage:true,//加载更多：是否显示按钮
@@ -92,13 +100,15 @@ export default {
     },
     methods: {
         getOrderList() {
+            this.loading = true
             this.axios.get("/orders",{
                 params: {
+                    pageSize: this.pageSize,
                     pageNum: this.pageNum
                 }
             }).then(res => {
                 this.loading = false;
-                this.list = res.list;
+                this.list = this.list.concat(res.list);
                 this.total = res.total;
             }).catch(() => {
                 this.loading = false;
@@ -118,9 +128,15 @@ export default {
                 }
             })
         },
+        // 处理分页
         handleChange(pageNum) {
            this.pageNum = pageNum;
            this.getOrderList();
+        },
+        // 加载更多
+        loadMore() {
+          this.pageNum++;
+          this.getOrderList(); 
         }
     },
 }
