@@ -1,0 +1,39 @@
+.btn{
+    display: inline-block;
+    width: 110px;
+    line-height: 30px;
+    text-align: center;
+    background-color: $colorA;
+    color: $colorG;
+    border: none; //消除按钮的默认 border
+    cursor: pointer;
+}
+//默认按钮
+.btn-default{
+    background-color: #b0b0b0;
+    color: $colorG;
+    border: 1px solid $colorF;
+}
+//长按钮
+.btn-large{
+  width: 202px;
+  height: 50px;
+  line-height: 50px;
+  font-size: $fontH; // 18
+}
+//巨大按钮
+.btn-huge{
+  width: 300px;
+  height: 54px;
+  font-size: $fontI; // 16
+
+}
+// 俩个按钮
+.btn-group{
+   .btn{
+       margin-right: 20px;
+       &:last-child{
+           margin-right: 0px;
+       }
+   }
+}
