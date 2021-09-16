@@ -2,17 +2,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './pages/home'
-import Login from './pages/login'
-import Register from './pages/register'
 import Index from './pages/index'
-import Product from './pages/product'
-import Detail from './pages/detail'
-import Cart from './pages/cart'
-import Order from './pages/order'
-import OrderConfrim from './pages/orderConfirm'
-import OrderList from './pages/orderList'
-import OrderPay from './pages/orderPay'
-import Alipay from './pages/alipay'
 
 Vue.use(Router)
 
@@ -33,51 +23,51 @@ export default new Router({
             //http:localhost:8080/#/product/123(商品页面)
             path: '/product/:id',
             name: 'product',
-            component: Product
+            component: () => import("./pages/product.vue")
         }, {
             //http:localhost:8080/#/detail/123(商品详情页面)
             path: '/detail/:id',
             name: 'detail',
-            component: Detail
+            component: () => import("./pages/detail.vue")
         }
         ]
     },
     {
         path: '/login',
         name: 'login',
-        component: Login
+        component: () => import("./pages/login.vue")
     },
     {
         path: '/register',
         name: 'register',
-        component: Register
+        component: () => import("./pages/register.vue")
     },
     {
         path: '/cart',//http:localhost:8080/#/cart(商品卡片)
         name: 'cart',
-        component: Cart
+        component: () => import("./pages/cart.vue")
     },
     {
         path: '/order',
         name: 'order',
-        component: Order,
+        component: () => import("./pages/order.vue"),
         // 子页面
         children: [{
             path: 'confirm',//http://localhost:8080/order/confrim (提交订单)
             name: 'order-confrim',
-            component: OrderConfrim
+            component: () => import("./pages/orderConfirm.vue")
         }, {
             path: 'list',//http://localhost:8080/order/list (订单列表)
             name: 'order-list',
-            component: OrderList
+            component: () => import("./pages/orderList.vue")
         }, {
             path: 'Pay',//http://localhost:8080/order/pay(订单支付)
             name: 'order-pay',
-            component: OrderPay
+            component: () => import("./pages/orderPay.vue")
         }, {
             path: 'alipay',//支付中间页面
             name: 'alipay',
-            component: Alipay
+            component: () => import("./pages/alipay.vue")
         }
 
         ]
